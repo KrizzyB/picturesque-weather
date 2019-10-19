@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<!--<html manifest="cache.manifest">-->
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Weather</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="js/jquery.jsonp.js"></script>
+    <script src="js/weatherApp.js"></script>
+    <script src="js/find-locations.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHm10uboPL57TqFWsZBk0CSKCtT3AeGV0"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" href ="img/weather-icons/sunny.png" />
+</head>
+<body>
+
+    <div id="overlay">
+        <img src="img/loading.gif" id="loading">
+    </div>
+
+    <div data-role="page" id="main">
+
+        <div data-role="header" data-theme="b" id="main-header">
+            <h1>Weather</h1>
+            <a href="#" class="ui-btn-right" id="menu-button"></a>
+        </div>
+
+        <div data-role="content">
+
+            <div data-role="popup" id="location-error" data-theme="b">
+                <p>Weather for this location is unavailable.<p>
+            </div>
+            <div data-role="popup" id="gps-error" data-theme="b">
+                <p>Cannot detect GPS location.<p>
+            </div>
+            <div data-role="popup" id="internet-error" data-theme="b">
+                <p>Device is currently offline.<p>
+            </div>
+
+            <div id="today">
+
+                <div id="status-display" class="main-text"></div>
+
+                <div id="temperatures">
+                    <p id="today-weather" class="main-text">-----</p>
+                    <p id="max-temp" class="main-text">--°C</p>
+                    <p id="min-temp" class="main-text">--°C</p>
+                </div>
+
+                <div id="town-name">
+                    <p id="town" class="main-text">-----</p>
+                </div>
+
+                <div id="details-bar">
+                    <div id="wind">
+                        <img src="img/wind-icons/wind-n.png" height="30" width="30" id="wind-direction" style="vertical-align: middle;">
+                        <span id="wind-speed" class="main-text">-- mph</span>
+                    </div>
+                    <div id="sun-times">
+                        <img src="img/sunrise.png" id="sunrise-icon" height="30" width="30" style="vertical-align: middle;">
+                        <span id="sunrise" class="main-text">--:--</span>
+                        <span class="main-text">&nbsp;-&nbsp;</span>
+                        <span id="sunset" class="main-text">--:--</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="next-days">
+
+
+                <div id="tomorrow" class="next-days-div">
+                    <a href="#tomorrow-3hourly"></a>
+                    <p class="main-text nextday-name" id="tomorrow-name">----</p>
+                    <p class="main-text nextday-mininame" id="tomorrow-mininame">---</p>
+                    <img src="img/weather-icons/none.png" class="weather-icon" id="tomorrow-icon">
+                    <p class="main-text nextday-forecast" id="tomorrow-weather">-----</p>
+                    <p class="main-text nextday-forecast" id="tomorrow-max-temp">--°C</p>
+                    <p class="main-text nextday-forecast" id="tomorrow-min-temp">--°C</p>
+                </div>
+
+                <div id="nextday" class="next-days-div">
+                    <p class="main-text nextday-name" id="nextday-name">----</p>
+                    <p class="main-text nextday-mininame" id="nextday-mininame">---</p>
+                    <img src="img/weather-icons/none.png" class="weather-icon" id="nextday-icon">
+                    <p class="main-text nextday-forecast" id="nextday-weather">-----</p>
+                    <p class="main-text nextday-forecast" id="nextday-max-temp">--°C</p>
+                    <p class="main-text nextday-forecast" id="nextday-min-temp">--°C</p>
+                </div>
+
+                <div id="day4" class="next-days-div">
+                    <p class="main-text nextday-name" id="day4-name">----</p>
+                    <p class="main-text nextday-mininame" id="day4-mininame">---</p>
+                    <img src="img/weather-icons/none.png" class="weather-icon" id="day4-icon">
+                    <p class="main-text nextday-forecast" id="day4-weather">-----</p>
+                    <p class="main-text nextday-forecast" id="day4-max-temp">--°C</p>
+                    <p class="main-text nextday-forecast" id="day4-min-temp">--°C</p>
+                </div>
+                <div id="day5" class="next-days-div">
+                    <p class="main-text nextday-name" id="day5-name">----</p>
+                    <p class="main-text nextday-mininame" id="day5-mininame">---</p>
+                    <img src="img/weather-icons/none.png" class="weather-icon" id="day5-icon">
+                    <p class="main-text nextday-forecast" id="day5-weather">-----</p>
+                    <p class="main-text nextday-forecast" id="day5-max-temp">--°C</p>
+                    <p class="main-text nextday-forecast" id="day5-min-temp">--°C</p>
+                </div>
+
+            </div>
+
+            <div data-role="panel" id="menu" data-position="right" data-display="overlay" data-theme="b">
+                <a href="#" data-role="button" data-icon="search" data-theme="b" id="search-button">Search Locations</a>
+                <a href="#menu" data-role="button" data-icon="location" data-theme="b" id="location-button">Detect Locaton</a>
+                <a href="#menu" data-role="button" data-icon="refresh" data-theme="b" id="refresh-button">Refresh</a>
+                <a href="#about" data-role="button" data-icon="info" data-theme="b">About</a>
+                <label for="flip-1">Temperature Format:</label>
+                <select name="flip-1" id="flip-1" data-role="slider">
+                    <option value="c">&deg;C</option>
+                    <option value="f">&deg;F</option>
+                </select>
+                <label for="flip-2">Wind Speed Format:</label>
+                <select name="flip-2" id="flip-2" data-role="slider">
+                    <option value="m">mph</option>
+                    <option value="k">kph</option>
+                </select>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div data-role="page" id="3hourly">
+
+        <div data-role="header" data-theme="b">
+            <h1>Details</h1>
+            <a href="#" data-rel="back" data-icon="back"></a>
+        </div>
+
+        <div data-role="content">
+            <div id ="day-name"></div>
+            <div id="3hourly-content"></div>
+        </div>
+    </div>
+
+    <div data-role="page" id="search">
+
+        <div data-role="header" data-theme="b">
+            <h1>Search</h1>
+            <a href="#" data-rel="back" data-icon="back"></a>
+        </div>
+
+        <div data-role="content" data-theme="b">
+
+            <form class="ui-filterable">
+                <input id="locations-search" data-type="search" class="filter-box" data-theme="a" placeholder="Seach Locations...">
+            </form>
+                <ul id="location-list" data-theme="b" data-role="listview" data-inset="true" data-filter="true" data-input="#locations-search"></ul>
+
+        </div>
+
+    </div>
+
+    <div data-role="page" id="about">
+
+        <div data-role="header" data-theme="b">
+            <h1>About</h1>
+            <a href="#" data-rel="back" data-icon="back"></a>
+        </div>
+
+        <div data-role="content" data-theme="b">
+            <div class="about-div">
+                <img src="img/about/metoffice.jpg">
+                <p>Locations & Forecasts provided by the Met Office</p>
+                <p>metoffice.gov.uk</p>
+            </div>
+            <div class="about-div">
+                <img src="img/about/sunrise.svg">
+                <p>Sunrise and sunset times provided by Sunrise-Sunset</p>
+                <p>sunrise-sunset.org</p>
+            </div>
+            <div class="about-div">
+                <img src="img/about/icons.png">
+                <p>Weather icons provided by d3stroy</p>
+                <p>d3stroy.deviantart.com</p>
+            </div>
+            <div class="about-div">
+                <img src="img/about/getty.jpg">
+                <p>Backgrounds provided by Getty Images</p>
+                <p>freeimages.com</p>
+            </div>
+            <div class="about-div">
+                <img src="img/about/material-icons.jpg">
+                <p>Interface icons provided by Material Design Icons</p>
+                <p>materialdesignicons.com</p>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
